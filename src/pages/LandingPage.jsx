@@ -25,6 +25,16 @@ const features = [
   { title: "👥 Social Learning", desc: "Challenge friends and study together in shared rooms." },
 ];
 
+function PressableLink({ to, className, children }) {
+  return (
+    <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+      <Link to={to} className={className}>
+        {children}
+      </Link>
+    </motion.div>
+  );
+}
+
 export default function LandingPage() {
   return (
     <section
@@ -71,16 +81,12 @@ export default function LandingPage() {
             learning platform.
           </motion.p>
           <motion.div className="inline-row" variants={itemVariants}>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link to="/auth" className="button-primary button-link">
-                Get Started
-              </Link>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link to="/ai-study-assistant" className="button-secondary button-link">
-                Explore AI Study Assistant
-              </Link>
-            </motion.div>
+            <PressableLink to="/auth" className="button-primary button-link">
+              Get Started
+            </PressableLink>
+            <PressableLink to="/ai-study-assistant" className="button-secondary button-link">
+              Explore AI Study Assistant
+            </PressableLink>
           </motion.div>
         </motion.div>
 
