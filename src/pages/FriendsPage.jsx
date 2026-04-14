@@ -14,14 +14,11 @@ export default function FriendsPage({ user }) {
   const activeFriend = FRIENDS.find((friend) => friend.id === activeFriendId);
 
   useEffect(() => {
+    const friend = FRIENDS.find((f) => f.id === activeFriendId);
     setMessages([
-      {
-        id: `welcome-${activeFriendId}`,
-        sender: activeFriend?.name || "Friend",
-        text: `Start a conversation with ${activeFriend?.name}!`,
-      },
+      { id: "welcome", sender: friend?.name ?? "Friend", text: "Say hi to start the conversation!" },
     ]);
-  }, [activeFriendId, activeFriend]);
+  }, [activeFriendId]);
 
   const handleSend = () => {
     const text = draftMessage.trim();
@@ -87,10 +84,7 @@ export default function FriendsPage({ user }) {
               value={draftMessage}
               onChange={(event) => setDraftMessage(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  handleSend();
-                }
+                if (event.key === "Enter") handleSend();
               }}
               placeholder={`Message ${activeFriend?.name}`}
             />
