@@ -1,0 +1,51 @@
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# Firebase Credentials
+firebase-config.js
+google-services.json
+credentials.json
+credential.json
+*credentials*.json
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Build & Dist
+dist/
+build/
+*.bundle.js
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local database
+*.db
+*.sqlite
+
+# Testing
+.coverage/
+.pytest_cache/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

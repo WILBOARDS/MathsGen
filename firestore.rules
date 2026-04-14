@@ -1,0 +1,124 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ==================== HELPER FUNCTIONS ====================
+    function hasAdminClaim() {
+      return request.auth.token.admin == true;
+    }
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isCurrentUser(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isOwnerOrAdmin(userId) {
+      return isCurrentUser(userId) || hasAdminClaim();
+    }
+
+    // ==================== COLLECTIONS ====================
+
+    // Settings & Config (admin only)
+    match /settings/{document=**} {
+      allow read, write: if hasAdminClaim();
+    }
+
+    // Feature Flags (admin only)
+    match /featureFlags/{document=**} {
+      allow read: if isAuthenticated();  // Users can read flags to know what's enabled
+      allow write: if hasAdminClaim();   // Only admins can modify flags
+    }
+
+    // User Profiles (user owns their doc, admins can read all)
+    match /users/{userId} {
+      allow read: if isOwnerOrAdmin(userId) || hasAdminClaim();
+      allow write: if isOwnerOrAdmin(userId);
+      allow delete: if hasAdminClaim();
+
+      // Prevent users from modifying their own admin status
+      allow update: if isCurrentUser(userId) && 
+                       (!('admin' in request.resource.data) || 
+                        request.resource.data.admin == resource.data.admin);
+    }
+
+    // Leaderboard (everyone reads, only backend writes via admin SDK)
+    match /leaderboard/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if hasAdminClaim();
+      allow delete: if hasAdminClaim();
+    }
+
+    // Activities/History (personal, immutable audit log)
+    match /activities/{userId}/{activityId} {
+      allow read: if isOwnerOrAdmin(userId);
+      allow create: if isCurrentUser(userId);
+      allow update, delete: if false;  // Immutable - no updates or deletes
+    }
+
+    // Friend Requests (bidirectional privacy)
+    match /friendRequests/{requestId} {
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid in resource.data.participants);
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+                               (request.auth.uid in resource.data.participants);
+    }
+
+    // Audit Logs (admin only, immutable)
+    match /audit_logs/{logId} {
+      allow read: if hasAdminClaim();
+      allow create: if hasAdminClaim();
+      allow update, delete: if false;  // Immutable
+    }
+
+    // User Feedback (users submit, admins review)
+    match /feedback/{feedbackId} {
+      allow create: if isAuthenticated();
+      allow read: if hasAdminClaim();
+      allow update, delete: if hasAdminClaim();
+    }
+
+    // Quizzes (public read, creator/admin can modify)
+    match /quizzes/{quizId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+                               (resource.data.createdBy == request.auth.uid || 
+                                hasAdminClaim());
+    }
+
+    // Quiz Responses (users track their own)
+    match /quizResponses/{userId}/{responseId} {
+      allow read, write, delete: if isCurrentUser(userId);
+    }
+
+    // Study Materials (public read, creator can modify)
+    match /studyMaterials/{materialId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+                               (resource.data.uploadedBy == request.auth.uid || 
+                                hasAdminClaim());
+    }
+
+    // Inventory (user's own inventory)
+    match /inventory/{userId}/{itemId} {
+      allow read, write, delete: if isCurrentUser(userId);
+    }
+
+    // Store Transactions (immutable log)
+    match /storeTransactions/{userId}/{txnId} {
+      allow read: if isCurrentUser(userId);
+      allow create: if isCurrentUser(userId);
+      allow update, delete: if false;  // Immutable
+    }
+
+    // Catch-all deny (default secure)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

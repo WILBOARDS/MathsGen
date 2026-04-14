@@ -1,0 +1,73 @@
+{
+  "name": "math-question-randomizer",
+  "version": "1.0.0",
+  "description": "Professional full-stack math learning application with Firebase backend",
+  "type": "module",
+  "main": "public/index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "preflight:firebase": "node tools/firebase-preflight.mjs",
+    "preflight:firebase:strict": "node tools/firebase-preflight.mjs --strict",
+    "deploy:firebase": "firebase deploy",
+    "local-hostd": "node tools/serve-local-hostd.mjs",
+    "admin:miniapp": "npm run local-hostd",
+    "analytics": "node tools/view-analytics.js",
+    "analytics:7d": "node tools/view-analytics.js --range=7",
+    "analytics:30d": "node tools/view-analytics.js --range=30",
+    "analytics:errors": "node tools/view-analytics.js --category=errors",
+    "analytics:vitals": "node tools/view-analytics.js --category=webVitals",
+    "analytics:feedback": "node tools/view-analytics.js --category=feedback",
+    "secret:scan": "node tools/secret-scan.mjs",
+    "secret:scan:staged": "node tools/secret-scan.mjs --staged",
+    "hooks:install": "node tools/install-hooks.mjs",
+    "test": "node --test tests/**/*.test.js"
+  },
+  "keywords": [
+    "math",
+    "education",
+    "firebase",
+    "learning",
+    "practice",
+    "quiz"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@firebase/vertexai": "^1.2.4",
+    "firebase": "^11.10.0",
+    "framer-motion": "^12.34.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-easy-crop": "^5.5.6",
+    "react-router-dom": "^7.13.0",
+    "web-vitals": "^5.1.0",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "firebase-tools": "^15.6.0",
+    "http-server": "^14.1.1",
+    "prettier": "^3.8.1",
+    "vite": "^7.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/math-question-randomizer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/math-question-randomizer/issues"
+  },
+  "homepage": "https://github.com/yourusername/math-question-randomizer#readme"
+}

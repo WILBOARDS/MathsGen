@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "github-triage": {
+      "source": "code-yeongyu/oh-my-openagent",
+      "sourceType": "github",
+      "computedHash": "077225efb4d28ae6f6b392786cac08d9a42c2a4474471d7837e56684a838141a"
+    }
+  }
+}

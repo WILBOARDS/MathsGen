@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default: deny all access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Study materials: allow authenticated users to read
+    match /study-materials/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // User uploads: allow users to upload to their own directory
+    match /user-uploads/{userId}/{allPaths=**} {
+      allow read: if request.auth.uid == userId || request.auth.token.admin == true;
+      allow write: if request.auth.uid == userId;
+    }
+  }
+}

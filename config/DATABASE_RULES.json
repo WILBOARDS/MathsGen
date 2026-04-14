@@ -1,0 +1,196 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['uid', 'name', 'email', 'stats'])",
+        "uid": {
+          ".validate": "newData.val() === $uid"
+        },
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "username": {
+          ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 20"
+        },
+        "title": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 60)"
+        },
+        "flag": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 8)"
+        },
+        "desiredCareer": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 60)"
+        },
+        "careerOther": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 120)"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/^[^@]+@[^@]+\\.[^@]+$/)"
+        },
+        "profilePicture": {
+          ".validate": "newData.val() === null || (newData.isString() && newData.val().length < 1000000)"
+        },
+        "accountType": {
+          ".validate": "!newData.exists() || (newData.isString() && (newData.val() === 'registered' || newData.val() === 'guest'))"
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "updatedAt": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "stats": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid",
+          ".validate": "newData.hasChildren(['totalCorrect', 'totalWrong', 'accuracy', 'streak', 'bestStreak', 'currentLevel'])",
+          "grade": {
+            ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 32)"
+          },
+          "totalCorrect": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "totalWrong": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "accuracy": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "streak": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
+          },
+          "bestStreak": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
+          },
+          "currentLevel": {
+            ".validate": "newData.isString() && (newData.val() === 'easy' || newData.val() === 'medium' || newData.val() === 'hard')"
+          },
+          "easyCorrect": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "easyWrong": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "mediumCorrect": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "mediumWrong": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "hardCorrect": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "hardWrong": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "score": {
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000000)"
+          },
+          "correctCount": {
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000)"
+          },
+          "incorrectCount": {
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000)"
+          },
+          "totalAnswered": {
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000)"
+          },
+          "bestCurrentStreak": {
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000)"
+          },
+          "xp": {
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000000)"
+          },
+          "totalQuestions": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "lastActiveDate": {
+            ".validate": "newData.isString()"
+          },
+          "updatedAt": {
+            ".validate": "newData.isString()"
+          }
+        }
+      }
+    },
+    "analytics": {
+      ".read": "auth != null",
+      "$category": {
+        "$eventId": {
+          ".write": "newData.hasChildren(['category', 'sessionId', 'timestamp', 'url'])",
+          ".validate": "newData.child('category').isString() && newData.child('sessionId').isString() && newData.child('timestamp').isString() && newData.child('url').isString()"
+        }
+      }
+    },
+    "lobbies": {
+      "$pin": {
+        ".read": "true",
+        ".write": "newData.exists() || data.exists()",
+        ".validate": "$pin.matches(/^[0-9]{6}$/)",
+        "host": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "hostName": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24"
+        },
+        "status": {
+          ".validate": "newData.isString()"
+        },
+        "sessionStatus": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "startedAt": {
+          ".validate": "!newData.exists() || newData.isNumber()"
+        },
+        "endedAt": {
+          ".validate": "!newData.exists() || newData.isNumber()"
+        },
+        "questionTimestamp": {
+          ".validate": "!newData.exists() || newData.isNumber()"
+        },
+        "currentQuestion": {
+          ".validate": "!newData.exists() || newData.hasChildren(['text', 'answer'])"
+        },
+        "players": {
+          "$playerId": {
+            ".validate": "newData.hasChildren(['name', 'score'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24"
+            },
+            "score": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "correctCount": {
+              ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0)"
+            },
+            "wrongCount": {
+              ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0)"
+            },
+            "status": {
+              ".validate": "!newData.exists() || newData.isString()"
+            },
+            "state": {
+              ".validate": "!newData.exists() || newData.isString()"
+            },
+            "joinedAt": {
+              ".validate": "!newData.exists() || newData.isNumber()"
+            },
+            "lastSeenAt": {
+              ".validate": "!newData.exists() || newData.isNumber()"
+            },
+            "disconnectedAt": {
+              ".validate": "!newData.exists() || newData.isNumber()"
+            },
+            "currentAnswer": {
+              ".validate": "!newData.exists() || newData.isString()"
+            }
+          }
+        }
+      }
+    }
+  }
+}
