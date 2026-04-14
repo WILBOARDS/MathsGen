@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { httpsCallable } from "firebase/functions";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { Link } from "react-router-dom";
-import { functions, isFirebaseConfigured } from "../firebaseClient.js";
+import { auth, isFirebaseConfigured } from "../firebaseClient.js";
 import { mapAuthError } from "../utils/mapAuthError.js";
 
 export default function ForgotPasswordPage() {
@@ -32,13 +32,10 @@ export default function ForgotPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      const requestPasswordReset = httpsCallable(functions, "requestPasswordReset");
-      const result = await requestPasswordReset({ email: normalizedEmail });
+      await sendPasswordResetEmail(auth, normalizedEmail);
       setStatus({
         type: "success",
-        text:
-          result.data?.message ||
-          "If an account exists for this email, a password reset link will be sent.",
+        text: "If an account exists for this email, a password reset link will be sent.",
       });
     } catch (error) {
       const message = mapAuthError(
@@ -57,7 +54,7 @@ export default function ForgotPasswordPage() {
         Reset Your Password
       </h2>
       <p className="page-subtitle">
-        We send a secure reset link with anti-abuse checks handled in Cloud Functions.
+        Enter your account email and we will send you a secure reset link.
       </p>
 
       {status.text ? (
