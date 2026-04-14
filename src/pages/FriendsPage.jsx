@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const FRIENDS = [
   { id: "f1", name: "Alicia", status: "Practicing Geometry" },
@@ -9,16 +9,19 @@ const FRIENDS = [
 export default function FriendsPage({ user }) {
   const [activeFriendId, setActiveFriendId] = useState(FRIENDS[0].id);
   const [draftMessage, setDraftMessage] = useState("");
-  const [messages, setMessages] = useState([
-    { id: "m1", sender: "Alicia", text: "Want to do a quick algebra round?" },
-    {
-      id: "m2",
-      sender: user?.displayName || "You",
-      text: "Yes, send me your quiz link.",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
 
   const activeFriend = FRIENDS.find((friend) => friend.id === activeFriendId);
+
+  useEffect(() => {
+    setMessages([
+      {
+        id: `welcome-${activeFriendId}`,
+        sender: activeFriend?.name || "Friend",
+        text: `Start a conversation with ${activeFriend?.name}!`,
+      },
+    ]);
+  }, [activeFriendId, activeFriend]);
 
   const handleSend = () => {
     const text = draftMessage.trim();
@@ -83,6 +86,12 @@ export default function FriendsPage({ user }) {
               type="text"
               value={draftMessage}
               onChange={(event) => setDraftMessage(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  handleSend();
+                }
+              }}
               placeholder={`Message ${activeFriend?.name}`}
             />
             <button type="button" className="button-primary" onClick={handleSend}>

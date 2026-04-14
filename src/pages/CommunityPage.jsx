@@ -1,12 +1,11 @@
+import { useEffect, useState } from "react";
+
 const STORAGE_KEY = "mqz_community_quizzes";
 
 function readQuizzes() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return [];
-    }
-
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -15,7 +14,18 @@ function readQuizzes() {
 }
 
 export default function CommunityPage() {
-  const quizzes = readQuizzes();
+  const [quizzes, setQuizzes] = useState(() => readQuizzes());
+
+  useEffect(() => {
+    // Refresh when another tab updates localStorage
+    const handleStorage = (event) => {
+      if (event.key === STORAGE_KEY || event.key === null) {
+        setQuizzes(readQuizzes());
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   return (
     <section className="page-card" aria-labelledby="community-heading">

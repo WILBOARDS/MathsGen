@@ -63,6 +63,14 @@ export default function CreateQuizzizzPage({ user }) {
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      try {
+        const statsRaw = localStorage.getItem("mqz_profile_stats");
+        const stats = statsRaw ? JSON.parse(statsRaw) : {};
+        stats.quizzesCreated = (Number(stats.quizzesCreated) || 0) + 1;
+        localStorage.setItem("mqz_profile_stats", JSON.stringify(stats));
+      } catch {
+        // Stats update is best-effort, don't block the main flow
+      }
       setStatus({
         type: "success",
         text: "Quizzizz saved. Redirecting to community gallery...",
