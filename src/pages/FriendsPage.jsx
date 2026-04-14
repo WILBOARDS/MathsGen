@@ -14,11 +14,14 @@ export default function FriendsPage({ user }) {
   const activeFriend = FRIENDS.find((friend) => friend.id === activeFriendId);
 
   useEffect(() => {
-    const friend = FRIENDS.find((f) => f.id === activeFriendId);
     setMessages([
-      { id: "welcome", sender: friend?.name ?? "Friend", text: "Say hi to start the conversation!" },
+      {
+        id: `welcome-${activeFriendId}`,
+        sender: activeFriend?.name || "Friend",
+        text: `Start a conversation with ${activeFriend?.name}!`,
+      },
     ]);
-  }, [activeFriendId]);
+  }, [activeFriendId, activeFriend]);
 
   const handleSend = () => {
     const text = draftMessage.trim();

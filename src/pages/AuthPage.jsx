@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   createUserWithEmailAndPassword,
@@ -23,7 +23,10 @@ export default function AuthPage() {
   const [signin, setSignin] = useState({ email: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const heading = mode === "signin" ? "Welcome Back" : "Create Your Account";
+  const heading = useMemo(
+    () => (mode === "signin" ? "Welcome Back" : "Create Your Account"),
+    [mode],
+  );
 
   const handleSignupSubmit = async (event) => {
     event.preventDefault();
@@ -113,13 +116,7 @@ export default function AuthPage() {
   };
 
   return (
-    <motion.section
-      className="page-card compact"
-      aria-labelledby="auth-heading"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-    >
+    <section className="page-card compact" aria-labelledby="auth-heading">
       <h2 id="auth-heading" className="page-title">
         {heading}
       </h2>
@@ -144,146 +141,109 @@ export default function AuthPage() {
         </button>
       </div>
 
-      <AnimatePresence>
-        {status.text ? (
-          <motion.p
-            key={status.text}
-            className={`status-block ${status.type === "success" ? "success" : "error"}`}
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+      {status.text ? (
+        <p className={`status-block ${status.type === "success" ? "success" : "error"}`}>
+          {status.text}
+        </p>
+      ) : null}
+
+      {mode === "signin" ? (
+        <form onSubmit={handleSigninSubmit} className="form-grid">
+          <label>
+            Email
+            <input
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={signin.email}
+              onChange={(event) =>
+                setSignin((prev) => ({ ...prev, email: event.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              required
+              placeholder="Your password"
+              value={signin.password}
+              onChange={(event) =>
+                setSignin((prev) => ({ ...prev, password: event.target.value }))
+              }
+            />
+          </label>
+
+          <button type="submit" disabled={isSubmitting} className="button-primary">
+            {isSubmitting ? "Signing In..." : "Sign In"}
+          </button>
+
+          <Link
+            to="/forgot-password"
+            className="button-secondary"
+            style={{ textAlign: "center" }}
           >
-            {status.text}
-          </motion.p>
-        ) : null}
-      </AnimatePresence>
+            Forgot Password?
+          </Link>
+        </form>
+      ) : (
+        <form onSubmit={handleSignupSubmit} className="form-grid">
+          <label>
+            Full Name
+            <input
+              type="text"
+              required
+              placeholder="Your full name"
+              value={signup.name}
+              onChange={(event) =>
+                setSignup((prev) => ({ ...prev, name: event.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Email
+            <input
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={signup.email}
+              onChange={(event) =>
+                setSignup((prev) => ({ ...prev, email: event.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              required
+              minLength={6}
+              placeholder="At least 6 characters"
+              value={signup.password}
+              onChange={(event) =>
+                setSignup((prev) => ({ ...prev, password: event.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Confirm Password
+            <input
+              type="password"
+              required
+              minLength={6}
+              placeholder="Repeat your password"
+              value={signup.confirmPassword}
+              onChange={(event) =>
+                setSignup((prev) => ({ ...prev, confirmPassword: event.target.value }))
+              }
+            />
+          </label>
 
-      <AnimatePresence mode="wait">
-        {mode === "signin" ? (
-          <motion.form
-            key="signin"
-            onSubmit={handleSigninSubmit}
-            className="form-grid"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
-          >
-            <label>
-              Email
-              <input
-                type="email"
-                required
-                placeholder="you@example.com"
-                value={signin.email}
-                onChange={(event) =>
-                  setSignin((prev) => ({ ...prev, email: event.target.value }))
-                }
-              />
-            </label>
-            <label>
-              Password
-              <input
-                type="password"
-                required
-                placeholder="Your password"
-                value={signin.password}
-                onChange={(event) =>
-                  setSignin((prev) => ({ ...prev, password: event.target.value }))
-                }
-              />
-            </label>
-
-            <motion.button
-              type="submit"
-              disabled={isSubmitting}
-              className="button-primary"
-              whileTap={{ scale: 0.97 }}
-            >
-              {isSubmitting ? "Signing In..." : "Sign In"}
-            </motion.button>
-
-            <Link
-              to="/forgot-password"
-              className="button-secondary"
-              style={{ textAlign: "center" }}
-            >
-              Forgot Password?
-            </Link>
-          </motion.form>
-        ) : (
-          <motion.form
-            key="signup"
-            onSubmit={handleSignupSubmit}
-            className="form-grid"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
-          >
-            <label>
-              Full Name
-              <input
-                type="text"
-                required
-                placeholder="Your full name"
-                value={signup.name}
-                onChange={(event) =>
-                  setSignup((prev) => ({ ...prev, name: event.target.value }))
-                }
-              />
-            </label>
-            <label>
-              Email
-              <input
-                type="email"
-                required
-                placeholder="you@example.com"
-                value={signup.email}
-                onChange={(event) =>
-                  setSignup((prev) => ({ ...prev, email: event.target.value }))
-                }
-              />
-            </label>
-            <label>
-              Password
-              <input
-                type="password"
-                required
-                minLength={6}
-                placeholder="At least 6 characters"
-                value={signup.password}
-                onChange={(event) =>
-                  setSignup((prev) => ({ ...prev, password: event.target.value }))
-                }
-              />
-            </label>
-            <label>
-              Confirm Password
-              <input
-                type="password"
-                required
-                minLength={6}
-                placeholder="Repeat your password"
-                value={signup.confirmPassword}
-                onChange={(event) =>
-                  setSignup((prev) => ({ ...prev, confirmPassword: event.target.value }))
-                }
-              />
-            </label>
-
-            <motion.button
-              type="submit"
-              disabled={isSubmitting}
-              className="button-primary"
-              whileTap={{ scale: 0.97 }}
-            >
-              {isSubmitting ? "Creating Account..." : "Create Account"}
-            </motion.button>
-          </motion.form>
-        )}
-      </AnimatePresence>
-    </motion.section>
+          <button type="submit" disabled={isSubmitting} className="button-primary">
+            {isSubmitting ? "Creating Account..." : "Create Account"}
+          </button>
+        </form>
+      )}
+    </section>
   );
 }
