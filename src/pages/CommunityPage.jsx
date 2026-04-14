@@ -17,14 +17,16 @@ export default function CommunityPage() {
   const [quizzes, setQuizzes] = useState(() => readQuizzes());
 
   useEffect(() => {
-    // Refresh when another tab updates localStorage
+    const refresh = () => setQuizzes(readQuizzes());
     const handleStorage = (event) => {
-      if (event.key === STORAGE_KEY || event.key === null) {
-        setQuizzes(readQuizzes());
-      }
+      if (event.key === STORAGE_KEY || event.key === null) refresh();
     };
     window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    window.addEventListener("mqz-quiz-saved", refresh);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("mqz-quiz-saved", refresh);
+    };
   }, []);
 
   return (

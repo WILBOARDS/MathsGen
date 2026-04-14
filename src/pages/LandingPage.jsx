@@ -96,11 +96,11 @@ export default function LandingPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
         >
-          <h3>Launch Notes</h3>
+          <h3>Why MathQuizzizz?</h3>
           <ul>
-            <li>Route persistence is now enabled.</li>
-            <li>AI Study Assistant has a public route.</li>
-            <li>Community and Create Quizzizz are live behind auth.</li>
+            <li>Adaptive quizzes that match your exact skill level.</li>
+            <li>Social study rooms — challenge friends and learn together.</li>
+            <li>AI hints that explain the "why", not just the answer.</li>
           </ul>
         </motion.aside>
       </div>

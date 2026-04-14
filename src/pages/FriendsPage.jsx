@@ -84,7 +84,10 @@ export default function FriendsPage({ user }) {
               value={draftMessage}
               onChange={(event) => setDraftMessage(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === "Enter") handleSend();
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  handleSend();
+                }
               }}
               placeholder={`Message ${activeFriend?.name}`}
             />

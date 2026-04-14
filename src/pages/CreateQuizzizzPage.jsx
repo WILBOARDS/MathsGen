@@ -71,6 +71,7 @@ export default function CreateQuizzizzPage({ user }) {
       } catch {
         // Stats update is best-effort, don't block the main flow
       }
+      window.dispatchEvent(new Event("mqz-quiz-saved"));
       setStatus({
         type: "success",
         text: "Quizzizz saved. Redirecting to community gallery...",
