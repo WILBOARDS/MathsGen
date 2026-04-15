@@ -55,6 +55,21 @@ export default function DashboardPage({ user }) {
             Open Chat
           </Link>
         </article>
+
+        <article className="panel">
+          <h3>Play a Quiz</h3>
+          <p>
+            Answer 10 randomised math questions against the clock. Track your streak and
+            accuracy in your profile.
+          </p>
+          <Link
+            to="/quiz"
+            className="button-primary button-link"
+            style={{ marginTop: "0.6rem" }}
+          >
+            Start Playing
+          </Link>
+        </article>
       </div>
     </section>
   );

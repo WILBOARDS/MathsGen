@@ -1,15 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-};
+import { staggerContainer, fadeSlideUp } from "../utils/motionVariants.js";
 
 const floatingSymbols = [
   { symbol: "+", x: "5%", y: "15%", delay: 0 },
@@ -69,18 +60,18 @@ export default function LandingPage() {
       ))}
 
       <div className="hero-grid">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-          <motion.p className="kicker" variants={itemVariants}>
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+          <motion.p className="kicker" variants={fadeSlideUp}>
             Public Landing
           </motion.p>
-          <motion.h2 id="landing-heading" className="page-title" variants={itemVariants}>
+          <motion.h2 id="landing-heading" className="page-title" variants={fadeSlideUp}>
             Practice Math Like A Game, Not A Chore
           </motion.h2>
-          <motion.p className="page-subtitle" variants={itemVariants}>
+          <motion.p className="page-subtitle" variants={fadeSlideUp}>
             Adaptive quiz experiences, social study loops, and AI-guided explanations in one
             learning platform.
           </motion.p>
-          <motion.div className="inline-row" variants={itemVariants}>
+          <motion.div className="inline-row" variants={fadeSlideUp}>
             <PressableLink to="/auth" className="button-primary button-link">
               Get Started
             </PressableLink>
@@ -108,7 +99,7 @@ export default function LandingPage() {
       <motion.div
         className="grid-panels"
         style={{ marginTop: "1.5rem" }}
-        variants={containerVariants}
+        variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-50px" }}
@@ -117,9 +108,9 @@ export default function LandingPage() {
           <motion.article
             key={feature.title}
             className="panel"
-            variants={itemVariants}
+            variants={fadeSlideUp}
             whileHover={{ y: -4, boxShadow: "0 12px 32px rgba(39,53,86,0.13)" }}
-            transition={{ type: "spring", stiffness: 300 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <h3>{feature.title}</h3>
             <p>{feature.desc}</p>

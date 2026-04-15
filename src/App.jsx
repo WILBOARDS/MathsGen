@@ -20,12 +20,14 @@ import LandingPage from "./pages/LandingPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import StudyAssistantPage from "./pages/StudyAssistantPage.jsx";
+import QuizPage from "./pages/QuizPage.jsx";
 import "./styles.css";
 
 const NAV_ITEMS = [
   { to: "/landing", label: "Landing", requiresAuth: false },
   { to: "/ai-study-assistant", label: "AI Study Assistant", requiresAuth: false },
   { to: "/dashboard", label: "Dashboard", requiresAuth: true },
+  { to: "/quiz", label: "Play Quiz", requiresAuth: true },
   { to: "/create-quizzizz", label: "Create Quizzizz", requiresAuth: true },
   { to: "/community", label: "Community", requiresAuth: true },
   { to: "/friends", label: "Friends Chat", requiresAuth: true },
@@ -285,6 +287,14 @@ function RoutedApp() {
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <ProfilePage user={currentUser} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quiz"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <QuizPage />
               </ProtectedRoute>
             }
           />

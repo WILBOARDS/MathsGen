@@ -25,6 +25,13 @@ export default function AuthPage() {
 
   const heading = mode === "signin" ? "Welcome Back" : "Create Your Account";
 
+  const formMotionProps = {
+    initial: { opacity: 0, x: 20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -20 },
+    transition: { duration: 0.2 },
+  };
+
   const handleSignupSubmit = async (event) => {
     event.preventDefault();
     setStatus({ type: "", text: "" });
@@ -165,10 +172,7 @@ export default function AuthPage() {
             key="signin"
             onSubmit={handleSigninSubmit}
             className="form-grid"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
+            {...formMotionProps}
           >
             <label>
               Email
@@ -217,10 +221,7 @@ export default function AuthPage() {
             key="signup"
             onSubmit={handleSignupSubmit}
             className="form-grid"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
+            {...formMotionProps}
           >
             <label>
               Full Name
