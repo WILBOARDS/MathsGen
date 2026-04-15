@@ -24,7 +24,7 @@
     "secret:scan": "node tools/secret-scan.mjs",
     "secret:scan:staged": "node tools/secret-scan.mjs --staged",
     "hooks:install": "node tools/install-hooks.mjs",
-    "test": "node --test tests/**/*.test.js"
+    "test": "node --test tests/*.test.js"
   },
   "keywords": [
     "math",
