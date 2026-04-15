@@ -22,7 +22,8 @@ credential.json
 node_modules/
 npm-debug.log
 yarn-error.log
-package-lock.json
+# package-lock.json is intentionally committed — required by `npm ci` and
+# the `cache: npm` step in CI (.github/workflows/*.yml)
 
 # Build & Dist
 dist/
