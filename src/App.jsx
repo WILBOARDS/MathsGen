@@ -9,6 +9,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { auth } from "./firebaseClient.js";
+import { STORAGE_KEYS } from "./constants/storageKeys.js";
 import AuthPage from "./pages/AuthPage.jsx";
 import CommunityPage from "./pages/CommunityPage.jsx";
 import ContactAdminPage from "./pages/ContactAdminPage.jsx";
@@ -56,7 +57,7 @@ function MiniChatDock({ visible }) {
   const [draftMessage, setDraftMessage] = useState("");
   const [messages, setMessages] = useState(() => {
     try {
-      const cached = localStorage.getItem("mqz_chat_dock_messages");
+      const cached = localStorage.getItem(STORAGE_KEYS.CHAT_DOCK_MESSAGES);
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -83,7 +84,7 @@ function MiniChatDock({ visible }) {
 
     try {
       const recent = messages.slice(-18);
-      localStorage.setItem("mqz_chat_dock_messages", JSON.stringify(recent));
+      localStorage.setItem(STORAGE_KEYS.CHAT_DOCK_MESSAGES, JSON.stringify(recent));
     } catch {
       // Ignore storage quotas in private modes.
     }
@@ -128,7 +129,13 @@ function MiniChatDock({ visible }) {
               type="text"
               value={draftMessage}
               onChange={(event) => setDraftMessage(event.target.value)}
-              placeholder="Type message"
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Type message — Enter to send"
             />
             <button type="button" className="button-secondary" onClick={handleSend}>
               Send
@@ -302,7 +309,13 @@ function RoutedApp() {
         </Routes>
       </main>
 
-      <MiniChatDock visible={isAuthenticated && location.pathname !== "/friends"} />
+      <MiniChatDock
+        visible={
+          isAuthenticated &&
+          location.pathname !== "/friends" &&
+          location.pathname !== "/quiz"
+        }
+      />
 
       <footer className="app-footer">
         <p>

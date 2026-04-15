@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const STORAGE_KEY = "mqz_community_quizzes";
+import { STORAGE_KEYS, CUSTOM_EVENTS } from "../constants/storageKeys.js";
 
 function readExistingQuizzes() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.COMMUNITY_QUIZZES);
     if (!raw) {
       return [];
     }
@@ -62,16 +61,16 @@ export default function CreateQuizzizzPage({ user }) {
     const updated = [nextQuiz, ...existing].slice(0, 80);
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.COMMUNITY_QUIZZES, JSON.stringify(updated));
       try {
-        const statsRaw = localStorage.getItem("mqz_profile_stats");
+        const statsRaw = localStorage.getItem(STORAGE_KEYS.PROFILE_STATS);
         const stats = statsRaw ? JSON.parse(statsRaw) : {};
         stats.quizzesCreated = (Number(stats.quizzesCreated) || 0) + 1;
-        localStorage.setItem("mqz_profile_stats", JSON.stringify(stats));
+        localStorage.setItem(STORAGE_KEYS.PROFILE_STATS, JSON.stringify(stats));
       } catch {
         // Stats update is best-effort, don't block the main flow
       }
-      window.dispatchEvent(new Event("mqz-quiz-saved"));
+      window.dispatchEvent(new Event(CUSTOM_EVENTS.QUIZ_SAVED));
       setStatus({
         type: "success",
         text: "Quizzizz saved. Redirecting to community gallery...",

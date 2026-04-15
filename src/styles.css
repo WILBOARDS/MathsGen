@@ -9,6 +9,9 @@
   --soft-border: #cfd7e6;
   --danger: #b42318;
   --ok: #166534;
+  /* Bright feedback colours used in quiz answer buttons */
+  --feedback-correct: #22c55e;
+  --feedback-wrong: #ef4444;
   --mono: "JetBrains Mono", monospace;
   --display: "Space Grotesk", sans-serif;
   --transition-fast: 0.15s ease;

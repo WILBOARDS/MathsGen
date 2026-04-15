@@ -54,12 +54,14 @@ export default function ContactAdminPage({ user }) {
 
         <article className="panel">
           <h3>Debug Log</h3>
-          <textarea
-            readOnly
-            className="mono"
-            value={debugLog}
-            style={{ minHeight: "230px" }}
-          />
+          <div className="form-grid">
+            <textarea
+              readOnly
+              className="mono"
+              value={debugLog}
+              style={{ minHeight: "230px", resize: "none" }}
+            />
+          </div>
         </article>
       </div>
     </section>

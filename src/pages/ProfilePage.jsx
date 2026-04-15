@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { staggerContainer, fadeSlideUp } from "../utils/motionVariants.js";
+import { STORAGE_KEYS } from "../constants/storageKeys.js";
 
 const panelVariants = fadeSlideUp;
 
@@ -12,7 +14,7 @@ function readProfileStats() {
     quizzesCreated: 0,
   };
   try {
-    const raw = localStorage.getItem("mqz_profile_stats");
+    const raw = localStorage.getItem(STORAGE_KEYS.PROFILE_STATS);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw);
     return {
@@ -89,7 +91,7 @@ export default function ProfilePage({ user }) {
         Player Profile
       </h2>
       <p className="page-subtitle">
-        Stats are null-safe and default to zero to prevent rendering crashes.
+        Your learning journey at a glance. Play quizzes to grow your stats.
       </p>
       <motion.div
         className="grid-panels"
@@ -168,6 +170,24 @@ export default function ProfilePage({ user }) {
           </div>
         </motion.article>
       </motion.div>
+
+      {stats.totalAnswered === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
+          style={{ marginTop: "1.2rem" }}
+          className="hero-callout"
+        >
+          <p style={{ margin: "0 0 0.6rem", fontWeight: 700 }}>🎯 Ready to start?</p>
+          <p style={{ margin: "0 0 0.85rem", fontSize: "0.9rem", color: "#4a5976" }}>
+            Play your first quiz to unlock stats, build a streak, and earn badges.
+          </p>
+          <Link to="/quiz" className="button-primary button-link">
+            Play a Quiz Now
+          </Link>
+        </motion.div>
+      )}
     </section>
   );
 }
