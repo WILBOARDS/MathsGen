@@ -21,8 +21,6 @@ export default defineConfig({
         manualChunks: {
           // React core – rarely changes, great cache candidate
           "vendor-react": ["react", "react-dom", "react-router-dom"],
-          // Animation libraries
-          "vendor-motion": ["framer-motion"],
           // Firebase SDK – large, split for better caching
           "vendor-firebase": [
             "firebase/app",
