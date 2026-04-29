@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { staggerContainer, fadeSlideUp } from "../utils/motionVariants.js";
+import { STORAGE_KEYS } from "../constants/storageKeys.js";
+
+const panelVariants = fadeSlideUp;
 
 function readProfileStats() {
   const fallback = {
@@ -8,9 +13,8 @@ function readProfileStats() {
     totalStreak: 0,
     quizzesCreated: 0,
   };
-
   try {
-    const raw = localStorage.getItem("mqz_profile_stats");
+    const raw = localStorage.getItem(STORAGE_KEYS.PROFILE_STATS);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw);
     return {
@@ -24,39 +28,27 @@ function readProfileStats() {
   }
 }
 
-function useCountUp(target, duration = 1200) {
-  const [current, setCurrent] = useState(0);
+function useCountUp(target, duration = 800) {
+  const [value, setValue] = useState(0);
   useEffect(() => {
     if (target === 0) return;
-    const steps = 40;
+    const steps = 30;
     const increment = target / steps;
-    const interval = duration / steps;
-    let count = 0;
+    let current = 0;
     const timer = setInterval(() => {
-      count += 1;
-      setCurrent(Math.min(Math.round(increment * count), target));
-      if (count >= steps) clearInterval(timer);
-    }, interval);
+      current += increment;
+      if (current >= target) {
+        setValue(target);
+        clearInterval(timer);
+      } else {
+        setValue(Math.floor(current));
+      }
+    }, duration / steps);
     return () => clearInterval(timer);
   }, [target, duration]);
-  return current;
+  return value;
 }
 
-const BADGES = [
-  { id: "first-quiz", label: "First Quiz", desc: "Created your first quiz", earned: (s) => s.quizzesCreated >= 1 },
-  { id: "10-correct", label: "10 Correct", desc: "Answered 10 questions right", earned: (s) => s.totalCorrect >= 10 },
-  { id: "streak-5", label: "Streak 5", desc: "5-question streak", earned: (s) => s.totalStreak >= 5 },
-];
-
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const panelVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-};
 
 export default function ProfilePage({ user }) {
   const [stats] = useState(readProfileStats);
@@ -71,19 +63,43 @@ export default function ProfilePage({ user }) {
       ? Math.round((stats.totalCorrect / stats.totalAnswered) * 100)
       : 0;
 
+  const badges = [
+    {
+      id: "first-quiz",
+      label: "First Quiz",
+      desc: "Created your first quiz",
+      earned: stats.quizzesCreated >= 1,
+    },
+    {
+      id: "getting-started",
+      label: "Getting Started",
+      desc: "Answered your first question",
+      earned: stats.totalAnswered >= 1,
+    },
+    {
+      id: "sharp-mind",
+      label: "Sharp Mind",
+      desc: "80%+ accuracy",
+      earned: accuracy >= 80,
+    },
+  ];
+
   return (
     <section className="page-card" aria-labelledby="profile-heading">
       <p className="kicker">Profile</p>
       <h2 id="profile-heading" className="page-title">
         Player Profile
       </h2>
+      <p className="page-subtitle">
+        Your learning journey at a glance. Play quizzes to grow your stats.
+      </p>
       <motion.div
         className="grid-panels"
-        variants={containerVariants}
+        variants={staggerContainer}
         initial="hidden"
         animate="visible"
       >
-        <motion.article className="panel" variants={panelVariants}>
+        <motion.article className="panel" variants={fadeSlideUp}>
           <h3>Identity</h3>
           <p>Name: {user?.displayName || "No display name set"}</p>
           <p>Email: {user?.email || "No email available"}</p>
@@ -95,64 +111,83 @@ export default function ProfilePage({ user }) {
           <p>Total Correct: {displayCorrect}</p>
           <p>Best Streak: {displayStreak}</p>
           <p>Quizzes Created: {displayCreated}</p>
-          <div style={{ marginTop: "0.6rem" }}>
-            <p style={{ fontSize: "0.82rem", marginBottom: "0.3rem" }}>
-              Accuracy: {accuracy}%
-            </p>
-            <div
-              style={{
-                background: "#e8ecf4",
-                borderRadius: "999px",
-                height: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <motion.div
+          {stats.totalAnswered > 0 && (
+            <div style={{ marginTop: "0.6rem" }}>
+              <p style={{ fontSize: "0.82rem", marginBottom: "0.3rem" }}>
+                Accuracy: {accuracy}%
+              </p>
+              <div
                 style={{
-                  background: "var(--accent)",
-                  height: "100%",
+                  background: "#e8ecf4",
                   borderRadius: "999px",
+                  height: "8px",
+                  overflow: "hidden",
                 }}
-                initial={{ width: 0 }}
-                animate={{ width: `${accuracy}%` }}
-                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-              />
+              >
+                <motion.div
+                  style={{
+                    background: "var(--accent)",
+                    height: "100%",
+                    borderRadius: "999px",
+                  }}
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${accuracy}%` }}
+                  transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </motion.article>
 
         <motion.article className="panel" variants={panelVariants}>
           <h3>Achievements</h3>
-          <div className="grid-panels" style={{ gap: "0.5rem" }}>
-            {BADGES.map((badge, i) => {
-              const earned = badge.earned(stats);
-              return (
-                <motion.div
-                  key={badge.id}
-                  style={{
-                    padding: "0.6rem",
-                    borderRadius: "0.6rem",
-                    border: "1px solid",
-                    borderColor: earned ? "#8fe8b5" : "var(--soft-border)",
-                    background: earned ? "#ebfff3" : "#f8fafc",
-                    textAlign: "center",
-                  }}
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: earned ? 1 : 0.55, scale: 1 }}
-                  transition={{ delay: 0.2 + i * 0.1, duration: 0.35 }}
-                >
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: "0.85rem" }}>
-                    {earned ? "✓ " : ""}{badge.label}
-                  </p>
-                  <p style={{ margin: 0, fontSize: "0.75rem", color: "#4a5976" }}>
-                    {badge.desc}
-                  </p>
-                </motion.div>
-              );
-            })}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {badges.map((badge, i) => (
+              <motion.div
+                key={badge.id}
+                style={{
+                  padding: "0.6rem",
+                  borderRadius: "0.6rem",
+                  border: "1px solid",
+                  borderColor: badge.earned ? "#8fe8b5" : "var(--soft-border)",
+                  background: badge.earned ? "#ebfff3" : "#f8fafc",
+                  textAlign: "center",
+                  opacity: badge.earned ? 1 : 0.45,
+                }}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: badge.earned ? 1 : 0.45, scale: 1 }}
+                transition={{ delay: 0.2 + i * 0.1, duration: 0.35 }}
+              >
+                <p style={{ margin: 0, fontWeight: 700, fontSize: "0.85rem" }}>
+                  {badge.earned ? "✓ " : ""}
+                  {badge.label}
+                </p>
+                <p style={{ margin: 0, fontSize: "0.75rem", color: "#4a5976" }}>
+                  {badge.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </motion.article>
       </motion.div>
+
+      {stats.totalAnswered === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
+          style={{ marginTop: "1.2rem" }}
+          className="hero-callout"
+        >
+          <p style={{ margin: "0 0 0.6rem", fontWeight: 700 }}>🎯 Ready to start?</p>
+          <p style={{ margin: "0 0 0.85rem", fontSize: "0.9rem", color: "#4a5976" }}>
+            Play your first quiz to unlock stats, build a streak, and earn badges.
+          </p>
+          <Link to="/quiz" className="button-primary button-link">
+            Play a Quiz Now
+          </Link>
+        </motion.div>
+      )}
     </section>
   );
 }

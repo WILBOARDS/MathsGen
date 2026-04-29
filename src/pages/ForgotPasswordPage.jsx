@@ -38,11 +38,19 @@ export default function ForgotPasswordPage() {
         text: "If an account exists for this email, a password reset link will be sent.",
       });
     } catch (error) {
-      const message = mapAuthError(
-        error.code,
-        "Could not send reset link right now. Please try again.",
-      );
-      setStatus({ type: "error", text: message });
+      // Treat "user not found" identically to success to prevent account enumeration
+      if (error.code === "auth/user-not-found") {
+        setStatus({
+          type: "success",
+          text: "If an account exists for this email, a password reset link will be sent.",
+        });
+      } else {
+        const message = mapAuthError(
+          error.code,
+          "Could not send reset link right now. Please try again.",
+        );
+        setStatus({ type: "error", text: message });
+      }
     } finally {
       setIsSubmitting(false);
     }

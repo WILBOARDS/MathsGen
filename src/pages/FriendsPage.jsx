@@ -16,7 +16,11 @@ export default function FriendsPage({ user }) {
   useEffect(() => {
     const friend = FRIENDS.find((f) => f.id === activeFriendId);
     setMessages([
-      { id: "welcome", sender: friend?.name ?? "Friend", text: "Say hi to start the conversation!" },
+      {
+        id: `welcome-${activeFriendId}`,
+        sender: friend?.name || "Friend",
+        text: `Start a conversation with ${friend?.name}!`,
+      },
     ]);
   }, [activeFriendId]);
 
